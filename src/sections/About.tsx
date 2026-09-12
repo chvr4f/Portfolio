@@ -2,13 +2,14 @@ import ScrollReveal from '@/components/ScrollReveal';
 import CountUp from '@/components/CountUp';
 import AnimatedContent from '@/components/AnimatedContent';
 import SectionHeading from '@/components/layout/SectionHeading';
+import Timeline from '@/components/layout/Timeline';
 import { profile, stats } from '@/data/content';
 
 export default function About() {
   return (
-    <section id="about" className="relative px-6 py-24 sm:py-32">
+    <section id="about" className="relative px-6 py-24 sm:py-32 lg:pl-64">
       <div className="mx-auto max-w-6xl">
-        <SectionHeading index="01 / About" title="Still a student. Already shipping." />
+        <SectionHeading index="02 / About" title="Still a student. Already shipping." />
 
         <div className="grid gap-16 lg:grid-cols-[1.55fr_1fr] lg:gap-20">
           <ScrollReveal
@@ -48,6 +49,8 @@ export default function About() {
             </AnimatedContent>
           </div>
         </div>
+
+        <Timeline />
       </div>
     </section>
   );

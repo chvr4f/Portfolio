@@ -193,10 +193,14 @@ export const timeline: TimelineEntry[] = [
   },
 ];
 
+/**
+ * Side-rail navigation. `num` is displayed, so keep these in section order —
+ * they must match the `id` on each <section> in App.tsx.
+ */
 export const navLinks = [
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Work', href: '#work' },
-  { label: 'Path', href: '#path' },
-  { label: 'Contact', href: '#contact' },
+  { num: '01', label: 'Home', href: '#home' },
+  { num: '02', label: 'About', href: '#about' },
+  { num: '03', label: 'Projects', href: '#projects' },
+  { num: '04', label: 'Skills', href: '#skills' },
+  { num: '05', label: 'Contact', href: '#contact' },
 ];

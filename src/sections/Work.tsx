@@ -10,10 +10,10 @@ export default function Work() {
   const rest = projects.filter(p => !p.featured);
 
   return (
-    <section id="work" className="relative px-6 py-24 sm:py-32">
+    <section id="projects" className="relative px-6 py-24 sm:py-32 lg:pl-64">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
-          index="03 / Work"
+          index="03 / Projects"
           title="Selected projects"
           lede="A mix of coursework that outgrew the brief, freelance builds, and things I made because I wanted them to exist."
         />

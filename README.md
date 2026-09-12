@@ -33,13 +33,49 @@ Change them there and every section follows.
 ```
 src/
 ├── data/content.ts       ← edit this
-├── index.css             ← design tokens, keyframes, base styles
+├── index.css             ← design tokens, keyframes, vendored-component overrides
 ├── App.tsx               ← section order
-├── sections/             ← Hero, About, Skills, Work, Path, Contact
+├── sections/             ← Hero, About, Work, Skills, Contact
 ├── components/           ← React Bits components (vendored)
-│   └── layout/           ← Nav, SectionHeading, CanvasBoundary
+│   └── layout/           ← SideNav, SectionHeading, Timeline, CanvasBoundary
 └── lib/cover.ts          ← generates project card artwork as inline SVG
 ```
+
+The five sections map 1:1 onto the five side-rail items, so every scroll
+position highlights exactly one:
+
+| # | Rail item | Section id | File |
+| --- | --- | --- | --- |
+| 01 | Home | `#home` | `sections/Hero.tsx` |
+| 02 | About | `#about` | `sections/About.tsx` (includes the timeline) |
+| 03 | Projects | `#projects` | `sections/Work.tsx` |
+| 04 | Skills | `#skills` | `sections/Skills.tsx` |
+| 05 | Contact | `#contact` | `sections/Contact.tsx` |
+
+Education & experience lives *inside* About (`components/layout/Timeline.tsx`)
+rather than owning a sixth section, which keeps the rail at the five items and
+means no scroll position leaves the rail blank.
+
+## Navigation
+
+[`components/layout/SideNav.tsx`](src/components/layout/SideNav.tsx) renders the
+same list two ways:
+
+- **lg and up** — React Bits `LineSidebar` as a fixed left rail. Its active item
+  is driven by scroll position (whichever section owns the middle of the
+  viewport), and clicking an item smooth-scrolls to that section.
+- **below lg** — React Bits `StaggeredMenu` as a slide-in panel, because a fixed
+  rail has nowhere to live on a phone.
+
+To add or reorder items, edit `navLinks` in `content.ts` **and** the matching
+`<section id="...">` — the rail resolves sections by that id. The `01`–`05`
+numbers on the rail are generated from list position; the numbers in the section
+headings are typed literals, so renumber those by hand if you reorder.
+
+The rail's accent is the site's cyan (`#22d3ee`). Change `accentColor` in
+`SideNav.tsx` to recolor it. Sections carry `lg:pl-64` to clear the fixed rail —
+if you change the rail's `markerLength`, `maxShift`, or `fontSize`, re-check
+that gutter.
 
 ## Project images
 
@@ -71,13 +107,23 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
   catches it and falls back to a CSS gradient. Wrap any future WebGL component the
   same way.
 - **Aurora is lazy-loaded** so the headline paints without waiting on `ogl`.
-- **Vendored components were modified** in three places. Re-adding them from the
-  registry will overwrite these:
+- **Vendored components were modified.** Re-adding them from the registry will
+  overwrite these:
   - `MagicBento.tsx` — added a `cards` prop (it hardcoded its own demo data) and
     removed the `max-w-[54rem]` / `width: 90%` constraints so the grid fills its container.
   - `TiltedCard.tsx` — overlay wrapper changed from `absolute top-0 left-0` to
     `absolute inset-0`, so `h-full` works for overlay content.
-  - The bento tile `aspect-[4/3]` is overridden at the bottom of `src/index.css`.
+  - `LineSidebar.tsx` — two changes: `defaultActive` now re-syncs after mount (it
+    was initial-state only, so scroll position could not drive the highlight), and
+    the items got `tabIndex`/`role`/Enter-Space handling since they shipped as
+    click-only `<li>`s with no keyboard path.
+- **Vendored styling is overridden from `src/index.css` instead of being edited**,
+  at the bottom of the file — the bento tile `aspect-[4/3]`, and the full dark
+  theme for the `StaggeredMenu` panel (it ships white with 4rem type, which also
+  pushed the item numbers off a phone screen). `StaggeredMenu` injects its own
+  `<style>` into the body, so those overrides deliberately carry an extra class
+  (`.sm-dark`) to win on specificity rather than on source order, and sit outside
+  `@layer` so they also beat the Tailwind utilities on its JSX.
 - **`tsconfig.app.json` relaxes `noUnusedLocals`/`noUnusedParameters`** because the
   vendored component sources don't satisfy them.
 - **`npm run lint` reports warnings from `src/components/*`** — those are upstream

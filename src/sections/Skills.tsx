@@ -17,10 +17,10 @@ const techLogos = techStack.map(name => ({
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative px-6 py-24 sm:py-32">
+    <section id="skills" className="relative px-6 py-24 sm:py-32 lg:pl-64">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
-          index="02 / Skills"
+          index="04 / Skills"
           title="What I reach for"
           lede="Hover a tile — the grid responds. Everything here is something I have actually shipped with, not just read about."
         />

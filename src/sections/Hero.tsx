@@ -13,8 +13,8 @@ const Aurora = lazy(() => import('@/components/Aurora'));
 export default function Hero() {
   return (
     <section
-      id="top"
-      className="grain relative isolate flex min-h-[100svh] flex-col justify-center overflow-hidden px-6"
+      id="home"
+      className="grain relative isolate flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 lg:pl-64"
     >
       {/* WebGL aurora, pinned behind everything and non-interactive */}
       <div
@@ -82,7 +82,7 @@ export default function Hero() {
         <div className="mt-10 flex flex-wrap items-center gap-3">
           <StarBorder
             as="a"
-            href="#work"
+            href="#projects"
             color="#22d3ee"
             speed="5s"
             thickness={1.5}

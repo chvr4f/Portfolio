@@ -1,10 +1,9 @@
 import ClickSpark from '@/components/ClickSpark';
-import Nav from '@/components/layout/Nav';
+import SideNav from '@/components/layout/SideNav';
 import Hero from '@/sections/Hero';
 import About from '@/sections/About';
-import Skills from '@/sections/Skills';
 import Work from '@/sections/Work';
-import Path from '@/sections/Path';
+import Skills from '@/sections/Skills';
 import Contact from '@/sections/Contact';
 
 export default function App() {
@@ -17,14 +16,13 @@ export default function App() {
         Skip to content
       </a>
 
-      <Nav />
+      <SideNav />
 
       <main>
         <Hero />
         <About />
-        <Skills />
         <Work />
-        <Path />
+        <Skills />
         <Contact />
       </main>
     </ClickSpark>

@@ -154,3 +154,84 @@
     min-height: 190px;
   }
 }
+
+/* ---------------------------------------------------------------
+   StaggeredMenu (mobile panel) — dark theme
+   The component ships a light panel (white bg, black 4rem type) and injects
+   its own <style> into the body, which would win over same-specificity rules
+   in this file. These selectors add one extra class so they win on
+   specificity instead of order, and stay outside @layer so they also beat
+   the Tailwind utilities set on the component's JSX.
+   --------------------------------------------------------------- */
+.sm-scope .sm-dark .staggered-menu-panel {
+  /* Fully opaque on purpose: the panel goes full-width under 1024px while the
+     component's prelayers stay 260px, and any transparency made that width
+     difference show up as a vertical seam down the panel. */
+  background: var(--color-ink-900);
+  border-right: 1px solid color-mix(in oklab, var(--color-mist-100) 8%, transparent);
+}
+
+/* Match the prelayers to the full-width panel so the slide-in animation
+   covers the whole screen rather than just the first 260px. */
+@media (max-width: 1024px) {
+  .sm-scope .sm-dark .sm-prelayers {
+    width: 100%;
+  }
+}
+
+/* 4rem uppercase overflows a phone-width panel, which pushed the item numbers
+   off-screen. Scale the type to the viewport so label + number both fit. */
+.sm-scope .sm-dark .sm-panel-item {
+  color: var(--color-mist-100);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 9vw, 2.75rem);
+  letter-spacing: -0.02em;
+  padding-right: 1.15em;
+}
+
+.sm-scope .sm-dark .sm-panel-item:hover {
+  color: var(--color-cyan-glow);
+}
+
+.sm-scope .sm-dark .sm-panel-list[data-numbering] .sm-panel-item::after {
+  right: 0;
+  top: 0.25em;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+}
+
+.sm-scope .sm-dark .sm-socials-title {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-mist-500);
+}
+
+.sm-scope .sm-dark .sm-socials-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-mist-300);
+}
+
+.sm-scope .sm-dark .sm-socials-link:hover,
+.sm-scope .sm-dark .sm-socials-link:focus-visible {
+  color: var(--color-cyan-glow);
+}
+
+/* The toggle flips to black for the light panel; keep it legible on dark. */
+.sm-scope .sm-dark .sm-toggle {
+  color: var(--color-mist-100);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* The panel is dark now, so don't invert the (already light-on-dark) logo. */
+.sm-scope .sm-dark.staggered-menu-wrapper[data-open] .sm-logo-img {
+  filter: none;
+}
