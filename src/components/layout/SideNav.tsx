@@ -1,9 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
-import LineSidebar from '@/components/LineSidebar';
+import { useEffect, useState } from 'react';
+import DotRail from '@/components/layout/DotRail';
 import { StaggeredMenu } from '@/components/StaggeredMenu';
 import { navLinks, profile, socials } from '@/data/content';
-
-const labels = navLinks.map(l => l.label);
 
 /**
  * Navigation is two presentations of the same list:
@@ -14,6 +12,7 @@ const labels = navLinks.map(l => l.label);
  */
 export default function SideNav() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   // Which section owns the middle of the viewport?
   useEffect(() => {
@@ -34,6 +33,9 @@ export default function SideNav() {
       // explicitly once we've hit the bottom of the page.
       const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 2;
       setActiveIndex(atBottom ? sections.length - 1 : current);
+
+      const scrollable = document.body.scrollHeight - window.innerHeight;
+      setProgress(scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0);
     };
 
     pick();
@@ -43,11 +45,6 @@ export default function SideNav() {
       window.removeEventListener('scroll', pick);
       window.removeEventListener('resize', pick);
     };
-  }, []);
-
-  const goToSection = useCallback((index: number) => {
-    const target = document.getElementById(navLinks[index].href.slice(1));
-    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
 
   return (
@@ -61,27 +58,9 @@ export default function SideNav() {
         <span className="text-violet-glow">.</span>
       </a>
 
-      {/* ── Desktop: LineSidebar rail ────────────────────────────────── */}
+      {/* ── Desktop: dot rail ────────────────────────────────────────── */}
       <div className="fixed top-1/2 left-8 z-50 hidden -translate-y-1/2 lg:block">
-        <LineSidebar
-          items={labels}
-          defaultActive={activeIndex}
-          onItemClick={goToSection}
-          accentColor="#22d3ee"
-          textColor="#7b8199"
-          markerColor="#4b5563"
-          showIndex
-          showMarker
-          scaleTick
-          markerLength={50}
-          markerGap={8}
-          tickScale={0.5}
-          maxShift={30}
-          itemGap={28}
-          fontSize={1.1}
-          proximityRadius={100}
-          falloff="smooth"
-        />
+        <DotRail activeIndex={activeIndex} progress={progress} />
       </div>
 
       {/* ── Mobile / tablet: StaggeredMenu panel ─────────────────────── */}

@@ -10,7 +10,7 @@ export default function Work() {
   const rest = projects.filter(p => !p.featured);
 
   return (
-    <section id="projects" className="relative px-6 py-24 sm:py-32 lg:pl-64">
+    <section id="projects" className="relative px-6 py-24 sm:py-32 lg:pl-44">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           index="03 / Projects"

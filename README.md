@@ -61,9 +61,11 @@ means no scroll position leaves the rail blank.
 [`components/layout/SideNav.tsx`](src/components/layout/SideNav.tsx) renders the
 same list two ways:
 
-- **lg and up** — React Bits `LineSidebar` as a fixed left rail. Its active item
-  is driven by scroll position (whichever section owns the middle of the
-  viewport), and clicking an item smooth-scrolls to that section.
+- **lg and up** — [`DotRail`](src/components/layout/DotRail.tsx): a column of
+  dots with a scroll-progress track. At rest it is ~7px wide; the number and
+  label slide out only for the active section and for whichever dot is hovered
+  or keyboard-focused, so the page keeps nearly its full width. The active
+  section is whichever one owns the middle of the viewport.
 - **below lg** — React Bits `StaggeredMenu` as a slide-in panel, because a fixed
   rail has nowhere to live on a phone.
 
@@ -72,10 +74,9 @@ To add or reorder items, edit `navLinks` in `content.ts` **and** the matching
 numbers on the rail are generated from list position; the numbers in the section
 headings are typed literals, so renumber those by hand if you reorder.
 
-The rail's accent is the site's cyan (`#22d3ee`). Change `accentColor` in
-`SideNav.tsx` to recolor it. Sections carry `lg:pl-64` to clear the fixed rail —
-if you change the rail's `markerLength`, `maxShift`, or `fontSize`, re-check
-that gutter.
+Sections carry `lg:pl-44` to clear the fixed rail. If you lengthen the labels
+or bump their font size, re-check that gutter — the rail's widest point (with a
+label expanded) must stay left of where the content starts.
 
 ## Project images
 
@@ -113,10 +114,6 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
     removed the `max-w-[54rem]` / `width: 90%` constraints so the grid fills its container.
   - `TiltedCard.tsx` — overlay wrapper changed from `absolute top-0 left-0` to
     `absolute inset-0`, so `h-full` works for overlay content.
-  - `LineSidebar.tsx` — two changes: `defaultActive` now re-syncs after mount (it
-    was initial-state only, so scroll position could not drive the highlight), and
-    the items got `tabIndex`/`role`/Enter-Space handling since they shipped as
-    click-only `<li>`s with no keyboard path.
 - **Vendored styling is overridden from `src/index.css` instead of being edited**,
   at the bottom of the file — the bento tile `aspect-[4/3]`, and the full dark
   theme for the `StaggeredMenu` panel (it ships white with 4rem type, which also

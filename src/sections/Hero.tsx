@@ -14,7 +14,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="grain relative isolate flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 lg:pl-64"
+      className="grain relative isolate flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 lg:pl-44"
     >
       {/* WebGL aurora, pinned behind everything and non-interactive */}
       <div

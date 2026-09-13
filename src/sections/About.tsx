@@ -7,7 +7,7 @@ import { profile, stats } from '@/data/content';
 
 export default function About() {
   return (
-    <section id="about" className="relative px-6 py-24 sm:py-32 lg:pl-64">
+    <section id="about" className="relative px-6 py-24 sm:py-32 lg:pl-44">
       <div className="mx-auto max-w-6xl">
         <SectionHeading index="02 / About" title="Still a student. Already shipping." />
 

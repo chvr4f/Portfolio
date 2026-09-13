@@ -17,7 +17,7 @@ const techLogos = techStack.map(name => ({
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative px-6 py-24 sm:py-32 lg:pl-64">
+    <section id="skills" className="relative px-6 py-24 sm:py-32 lg:pl-44">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           index="04 / Skills"
