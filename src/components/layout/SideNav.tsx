@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import DotRail from '@/components/layout/DotRail';
+import { useEffect, useRef, useState } from 'react';
+import CameraNav from '@/components/layout/CameraNav';
 import { StaggeredMenu } from '@/components/StaggeredMenu';
-import { navLinks, profile, socials } from '@/data/content';
+import { navLinks, socials } from '@/data/content';
 
 /**
  * Navigation is two presentations of the same list:
@@ -11,10 +11,12 @@ import { navLinks, profile, socials } from '@/data/content';
  *    rail has nowhere to live on a narrow screen.
  */
 export default function SideNav() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
+  // Fractional index across the sections: 2.4 means 40% of the way from
+  // Projects to Skills. The wheel reads this directly so it can slide and
+  // crossfade continuously instead of snapping at section boundaries.
+  const [position, setPosition] = useState(0);
+  const frame = useRef<number | null>(null);
 
-  // Which section owns the middle of the viewport?
   useEffect(() => {
     const sections = navLinks
       .map(l => document.getElementById(l.href.slice(1)))
@@ -22,45 +24,64 @@ export default function SideNav() {
 
     if (!sections.length) return;
 
-    const pick = () => {
+    const measure = () => {
       const mid = window.scrollY + window.innerHeight / 2;
-      let current = 0;
-      sections.forEach((s, i) => {
-        if (s.offsetTop <= mid) current = i;
-      });
+      const tops = sections.map(s => s.offsetTop);
+      const last = tops.length - 1;
 
-      // The last section can be too short to reach the midpoint, so claim it
-      // explicitly once we've hit the bottom of the page.
-      const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 2;
-      setActiveIndex(atBottom ? sections.length - 1 : current);
+      let next = 0;
+      if (mid <= tops[0]) {
+        next = 0;
+      } else if (mid >= tops[last]) {
+        next = last;
+      } else {
+        for (let i = 0; i < last; i++) {
+          if (mid >= tops[i] && mid < tops[i + 1]) {
+            const span = tops[i + 1] - tops[i];
+            const raw = span > 0 ? (mid - tops[i]) / span : 0;
 
-      const scrollable = document.body.scrollHeight - window.innerHeight;
-      setProgress(scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0);
+            // Interpolating linearly would read as the *next* section while
+            // you are still at the top of this one, because the viewport
+            // midpoint already sits well into it. Hold the wheel on this
+            // section for the first stretch, then ease across to the next.
+            const HOLD = 0.45;
+            const t = Math.min(1, Math.max(0, (raw - HOLD) / (1 - HOLD)));
+            next = i + t * t * (3 - 2 * t); // smoothstep
+            break;
+          }
+        }
+      }
+
+      // The final section is often too short to pull the midpoint onto it.
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
+        next = last;
+      }
+      setPosition(next);
     };
 
-    pick();
-    window.addEventListener('scroll', pick, { passive: true });
-    window.addEventListener('resize', pick);
+    const onScroll = () => {
+      if (frame.current != null) return;
+      frame.current = requestAnimationFrame(() => {
+        frame.current = null;
+        measure();
+      });
+    };
+
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', measure);
     return () => {
-      window.removeEventListener('scroll', pick);
-      window.removeEventListener('resize', pick);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', measure);
+      if (frame.current != null) cancelAnimationFrame(frame.current);
     };
   }, []);
 
   return (
     <>
-      {/* Brand mark — keeps the site identified now that the top bar is gone */}
-      <a
-        href="#home"
-        className="fixed top-8 left-8 z-50 hidden font-display text-[15px] font-bold tracking-tight text-mist-100 lg:block"
-      >
-        {profile.name}
-        <span className="text-violet-glow">.</span>
-      </a>
-
-      {/* ── Desktop: dot rail ────────────────────────────────────────── */}
+      {/* ── Desktop: camera mode wheel ───────────────────────────────── */}
       <div className="fixed top-1/2 left-8 z-50 hidden -translate-y-1/2 lg:block">
-        <DotRail activeIndex={activeIndex} progress={progress} />
+        <CameraNav position={position} />
       </div>
 
       {/* ── Mobile / tablet: StaggeredMenu panel ─────────────────────── */}
@@ -76,7 +97,6 @@ export default function SideNav() {
           }))}
           socialItems={socials.map(s => ({ label: s.label, link: s.href }))}
           displaySocials
-          displayItemNumbering
           logoUrl="/mark.svg"
           accentColor="#22d3ee"
           colors={['#1b1436', '#0e1018']}

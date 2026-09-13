@@ -9,11 +9,11 @@ type Props = {
 type State = { failed: boolean };
 
 /**
- * Decorative WebGL components (Aurora and friends) throw during init when a
- * GL context is unavailable — headless browsers, GPU blocklists, WebGL turned
- * off, some VMs. Without a boundary that error unmounts the whole page, so the
- * visitor gets a blank screen instead of a portfolio. Contain it here and fall
- * back to a static gradient.
+ * Decorative WebGL components throw during init when a GL context is
+ * unavailable — headless browsers, GPU blocklists, WebGL turned off, some VMs.
+ * Without a boundary that error unmounts the whole page and the visitor gets a
+ * blank screen instead of a portfolio. Contain it here and fall back to a
+ * static gradient.
  */
 export default class CanvasBoundary extends Component<Props, State> {
   state: State = { failed: false };

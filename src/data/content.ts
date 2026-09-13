@@ -6,12 +6,13 @@
  */
 
 export const profile = {
-  name: 'Alwan',
-  /** Rotating lines typed out under the hero headline. */
-  roles: ['Computer Science student', 'Front-end developer', 'Building things for the web'],
+  name: 'Charaf',
+  /** Cycled through the highlighted "I'm a ___" line in the hero. */
+  roles: ['Full-Stack Developer', 'AI & ML Enthusiast', 'Front-End Specialist'],
   location: 'Jakarta, Indonesia',
   /** Short line directly under the name. */
-  tagline: 'I build fast, tactile web interfaces — and I am looking for my first role.',
+  tagline:
+    'Obsessed with building web experiences that feel fast, look sharp, and work for everyone. I turn rough ideas into polished products that leave a mark.',
   /** 2–3 sentences. Shown in the About section with a scroll reveal. */
   bio: `I'm a computer science student who fell for the front end — the part where a
   layout stops being a mockup and starts responding to you. I care about motion that
@@ -194,13 +195,13 @@ export const timeline: TimelineEntry[] = [
 ];
 
 /**
- * Side-rail navigation. `num` is displayed, so keep these in section order —
- * they must match the `id` on each <section> in App.tsx.
+ * Side-rail navigation. Keep these in section order — the rail resolves each
+ * one by the matching `id` on a <section> in App.tsx.
  */
 export const navLinks = [
-  { num: '01', label: 'Home', href: '#home' },
-  { num: '02', label: 'About', href: '#about' },
-  { num: '03', label: 'Projects', href: '#projects' },
-  { num: '04', label: 'Skills', href: '#skills' },
-  { num: '05', label: 'Contact', href: '#contact' },
+  { label: 'Home', href: '#home' },
+  { label: 'About', href: '#about' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Contact', href: '#contact' },
 ];

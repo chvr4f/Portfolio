@@ -5,7 +5,7 @@ import { profile, socials } from '@/data/content';
 
 export default function Contact() {
   return (
-    <section id="contact" className="relative px-6 py-24 sm:py-32 lg:pl-44">
+    <section id="contact" className="relative px-6 py-24 sm:py-32 lg:pl-52 xl:pl-72">
       <div className="mx-auto max-w-4xl">
         <AnimatedContent distance={60} duration={1} threshold={0.15}>
           <ElectricBorder color="#5227ff" speed={0.9} chaos={0.1} borderRadius={28}>
