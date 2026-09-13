@@ -3,8 +3,10 @@ import GlitchText from '@/components/GlitchText';
 import RotatingText from '@/components/RotatingText';
 import AnimatedContent from '@/components/AnimatedContent';
 import DecryptedText from '@/components/DecryptedText';
-import StarBorder from '@/components/StarBorder';
+import SpecularButton from '@/components/SpecularButton';
 import CanvasBoundary from '@/components/layout/CanvasBoundary';
+import useAppLoaded from '@/hooks/useAppLoaded';
+import SocialIcon from '@/components/layout/SocialIcon';
 import { profile, socials } from '@/data/content';
 
 // ogl is ~70 kB of WebGL runtime and purely decorative — keep it off the
@@ -12,6 +14,10 @@ import { profile, socials } from '@/data/content';
 const DarkVeil = lazy(() => import('@/components/DarkVeil'));
 
 export default function Hero() {
+  // The decrypt is the one hero animation long enough to be wasted behind the
+  // boot overlay, so it waits for the handoff instead of starting at mount.
+  const loaded = useAppLoaded();
+
   return (
     <section
       id="home"
@@ -71,55 +77,77 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Scrambles through random glyphs and resolves into the real copy. */}
-        <p className="mt-6 max-w-xl text-[clamp(1rem,2.2vw,1.4rem)] leading-relaxed text-gray-400">
-          <DecryptedText
-            text={profile.tagline}
-            animateOn="view"
-            sequential
-            revealDirection="start"
-            // ~160 chars revealed sequentially: keep this low or the intro
-            // paragraph stays unreadable for several seconds.
-            speed={11}
-            maxIterations={10}
-            encryptedClassName="text-cyan-glow/60"
-          />
-        </p>
+        {/* Scrambles through random glyphs and resolves into the real copy.
 
-        <div className="mt-10 flex flex-wrap items-center gap-3">
-          <StarBorder
-            as="a"
+            The hidden copy underneath reserves the box. Random glyphs are wider
+            than the real ones, so without it the scrambled text wrapped to an
+            extra line — and in a vertically-centred section that rocked the
+            name up and the buttons down by 18px for the whole animation.
+            `useOriginalCharsOnly` draws the scramble from the tagline's own
+            characters instead of a set full of wide symbols, which keeps the
+            wrapping close to the finished text. It can still run one line long
+            mid-scramble; that line falls into the gap above the buttons and
+            nothing below it moves, because the box is fixed. */}
+        <div className="relative mt-6 max-w-xl text-[clamp(1rem,2.2vw,1.4rem)] leading-relaxed">
+          <p aria-hidden className="invisible">
+            {profile.tagline}
+          </p>
+          <p className="absolute inset-0 text-gray-400">
+            {loaded && (
+              <DecryptedText
+                text={profile.tagline}
+                animateOn="view"
+                sequential
+                revealDirection="start"
+                useOriginalCharsOnly
+                // 150 chars revealed one per tick, so this is ms-per-character:
+                // ~3.7s end to end.
+                speed={25}
+                maxIterations={10}
+                encryptedClassName="text-cyan-glow/60"
+              />
+            )}
+          </p>
+        </div>
+
+        <div className="mt-10 flex flex-wrap items-center gap-4">
+          {/* Both carry an href, so they render as anchors rather than the
+              component's default <button> — see the note on SpecularButton. */}
+          <SpecularButton
             href="#projects"
-            color="#22d3ee"
-            speed="5s"
-            thickness={1.5}
-            backgroundColor="#0a0b12"
+            lineColor="#22d3ee"
+            baseColor="#3b2f7a"
+            intensity={1.15}
             className="font-mono text-[12px] tracking-wide uppercase"
           >
             View my work
-          </StarBorder>
+          </SpecularButton>
 
-          <a
+          <SpecularButton
             href={`mailto:${profile.email}`}
-            className="rounded-[20px] px-6 py-[17px] font-mono text-[12px] tracking-wide text-mist-300 uppercase ring-1 ring-white/12 transition-colors duration-300 hover:bg-white/5 hover:text-mist-100"
+            lineColor="#a78bfa"
+            baseColor="#3f3f46"
+            intensity={0.85}
+            textColor="#c9cbd6"
+            className="font-mono text-[12px] tracking-wide uppercase"
           >
             Say hello
-          </a>
+          </SpecularButton>
         </div>
 
-        <ul className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-2">
+        {/* Icon-only, so each link carries its name for screen readers. The
+            44px box is the pointer target — the mark itself is smaller. */}
+        <ul className="mt-12 -ml-3 flex flex-wrap items-center gap-1">
           {socials.map(s => (
             <li key={s.label}>
               <a
                 href={s.href}
                 target={s.href.startsWith('http') ? '_blank' : undefined}
                 rel={s.href.startsWith('http') ? 'noreferrer' : undefined}
-                className="group inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.14em] text-mist-500 uppercase transition-colors hover:text-mist-100"
+                aria-label={s.label}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full text-mist-500 transition-all duration-300 hover:bg-white/5 hover:text-cyan-glow focus-visible:bg-white/5 focus-visible:text-cyan-glow"
               >
-                {s.label}
-                <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">
-                  ↗
-                </span>
+                <SocialIcon name={s.icon} className="h-5 w-5" />
               </a>
             </li>
           ))}

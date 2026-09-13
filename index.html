@@ -29,8 +29,218 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+
+    <!--
+      Preloader styles live inline so the overlay paints on the first frame,
+      before the CSS bundle or any font has arrived. Everything here is scoped
+      under #preloader and the whole node is removed from the DOM once the app
+      is up, so none of it can leak into the page.
+    -->
+    <style>
+      #preloader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #05060a;
+        font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        transition:
+          opacity 0.6s ease,
+          visibility 0.6s;
+      }
+      #preloader.pl-out {
+        opacity: 0;
+        visibility: hidden;
+      }
+      /* Same palette as the hero backdrop, so the fade-out lands on a
+         background that already looks like the page underneath it. */
+      #preloader .pl-glow {
+        position: absolute;
+        top: -30%;
+        left: 50%;
+        width: 120vw;
+        height: 70vh;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: radial-gradient(ellipse at center, #5227ff 0%, transparent 62%);
+        opacity: 0.28;
+        filter: blur(80px);
+      }
+      #preloader .pl-inner {
+        position: relative;
+        width: min(80vw, 22rem);
+        text-align: center;
+      }
+      #preloader .pl-name {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.6rem;
+        font-size: clamp(1.9rem, 7vw, 3rem);
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-indent: 0.22em; /* balance the trailing letter-spacing */
+        background: linear-gradient(90deg, #60a5fa, #a855f7, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      #preloader .pl-name span {
+        opacity: 0;
+        animation: pl-letter 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+      @keyframes pl-letter {
+        from {
+          opacity: 0;
+          transform: translateY(0.35em);
+          filter: blur(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+          filter: blur(0);
+        }
+      }
+      #preloader .pl-track {
+        height: 2px;
+        overflow: hidden;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.09);
+      }
+      #preloader .pl-fill {
+        height: 100%;
+        transform: scaleX(0);
+        transform-origin: left center;
+        background: linear-gradient(90deg, #5227ff, #22d3ee);
+        box-shadow: 0 0 14px rgba(34, 211, 238, 0.55);
+      }
+      #preloader .pl-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.75rem;
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #6b7280;
+      }
+      #preloader .pl-pct {
+        color: #22d3ee;
+        font-variant-numeric: tabular-nums;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #preloader,
+        #preloader .pl-name span {
+          animation: none;
+          transition-duration: 0.15s;
+        }
+        #preloader .pl-name span {
+          opacity: 1;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="preloader" role="status" aria-live="polite" aria-label="Loading portfolio">
+      <div class="pl-glow" aria-hidden="true"></div>
+      <div class="pl-inner">
+        <div class="pl-name" aria-hidden="true">
+          <span style="animation-delay: 0.00s">C</span><span style="animation-delay: 0.06s">H</span
+          ><span style="animation-delay: 0.12s">A</span><span style="animation-delay: 0.18s">R</span
+          ><span style="animation-delay: 0.24s">A</span><span style="animation-delay: 0.30s">F</span>
+        </div>
+        <div class="pl-track" aria-hidden="true"><div class="pl-fill"></div></div>
+        <div class="pl-meta" aria-hidden="true">
+          <span>Loading</span><span class="pl-pct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var el = document.getElementById('preloader');
+        if (!el) return;
+        var fill = el.querySelector('.pl-fill');
+        var pct = el.querySelector('.pl-pct');
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Minimum time on screen. Without it a warm cache flashes the overlay
+        // for one frame, which reads as a glitch rather than an intro.
+        var MIN = reduce ? 0 : 1100;
+        var start = performance.now();
+        var progress = 0;
+        var last = start;
+        var ready = false;
+        var finished = false;
+
+        function paint() {
+          fill.style.transform = 'scaleX(' + progress / 100 + ')';
+          pct.textContent = Math.round(progress) + '%';
+        }
+
+        // Creep toward 90% while we wait on the app. Frame-rate independent:
+        // a slow device animates the same curve, just with fewer samples.
+        function frame(now) {
+          if (finished) return;
+          var dt = now - last;
+          last = now;
+          // Hold at 90 until the app reports in AND the minimum is served, so
+          // this agrees with complete() instead of fighting it over the snap.
+          var elapsed = now - start;
+          var target = ready && elapsed >= MIN ? 100 : Math.min(90, (elapsed / MIN) * 90);
+          progress += (target - progress) * (1 - Math.pow(0.88, dt / 16.67));
+          paint();
+          requestAnimationFrame(frame);
+        }
+
+        // Completion is driven by timers, not frames, so a stalled rAF (a busy
+        // main thread during boot, a weak GPU) can never strand the overlay.
+        function complete() {
+          if (finished) return;
+          var wait = Math.max(0, MIN - (performance.now() - start));
+          if (wait > 0) return setTimeout(complete, wait);
+          progress = 100;
+          paint();
+          setTimeout(finish, reduce ? 0 : 260); // let the full bar register
+        }
+
+        function finish() {
+          if (finished) return;
+          finished = true;
+          el.classList.add('pl-out');
+          // Hero entrance animations wait on this — otherwise the decrypt
+          // plays out behind the overlay and is already a third gone by the
+          // time anyone can see it.
+          window.__loaded = true;
+          window.dispatchEvent(new Event('app:loaded'));
+          // Drop the node entirely so it can never trap clicks or focus.
+          setTimeout(
+            function () {
+              el.parentNode && el.parentNode.removeChild(el);
+            },
+            reduce ? 160 : 700
+          );
+        }
+
+        // App.tsx calls this once React has mounted and the fonts have settled.
+        window.__appReady = function () {
+          if (ready) return;
+          ready = true;
+          complete();
+        };
+
+        // Belt and braces: never leave the overlay up if the app fails to boot.
+        window.addEventListener('load', function () {
+          setTimeout(window.__appReady, 600);
+        });
+        setTimeout(window.__appReady, 5000);
+
+        requestAnimationFrame(frame);
+      })();
+    </script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

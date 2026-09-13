@@ -1,6 +1,7 @@
 import ElectricBorder from '@/components/ElectricBorder';
 import StarBorder from '@/components/StarBorder';
 import AnimatedContent from '@/components/AnimatedContent';
+import SocialIcon from '@/components/layout/SocialIcon';
 import { profile, socials } from '@/data/content';
 
 export default function Contact() {
@@ -57,16 +58,17 @@ export default function Contact() {
           <p className="font-mono text-[11px] tracking-wide text-mist-500">
             © {new Date().getFullYear()} {profile.name}. Built with React &amp; React Bits.
           </p>
-          <ul className="flex items-center gap-5">
+          <ul className="flex items-center gap-1">
             {socials.map(s => (
               <li key={s.label}>
                 <a
                   href={s.href}
                   target={s.href.startsWith('http') ? '_blank' : undefined}
                   rel={s.href.startsWith('http') ? 'noreferrer' : undefined}
-                  className="font-mono text-[11px] tracking-[0.12em] text-mist-500 uppercase transition-colors hover:text-mist-100"
+                  aria-label={s.label}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-mist-500 transition-colors hover:text-cyan-glow focus-visible:text-cyan-glow"
                 >
-                  {s.label}
+                  <SocialIcon name={s.icon} className="h-[17px] w-[17px]" />
                 </a>
               </li>
             ))}

@@ -19,7 +19,7 @@ export const profile = {
   explains something, interfaces that stay quick on a mid-range phone, and code the
   next person can actually read. Right now I'm looking for an internship or junior
   role where I can keep learning in public.`,
-  email: 'you@example.com',
+  email: 'charaf2322004@gmail.com',
   resumeUrl: '/resume.pdf',
 } as const;
 
@@ -30,11 +30,14 @@ export const stats = [
   { label: 'Coffee per week', value: 21, suffix: '' },
 ];
 
+/** `icon` keys into the brand marks in components/layout/SocialIcon.tsx. */
 export const socials = [
-  { label: 'GitHub', href: 'https://github.com/yourhandle' },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/yourhandle' },
-  { label: 'Email', href: 'mailto:you@example.com' },
-];
+  { label: 'GitHub', href: 'https://github.com/chvr4f', icon: 'github' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/charafalwan/', icon: 'linkedin' },
+  { label: 'Email', href: 'mailto:charaf2322004@gmail.com', icon: 'email' },
+  // `as const` keeps `icon` as its literal type so it still satisfies
+  // SocialIcon's union instead of widening to plain string.
+] as const;
 
 /** Skill tiles for the MagicBento grid. Exactly 6 reads best. */
 export const skills = [
@@ -102,7 +105,7 @@ export const projects: Project[] = [
     tags: ['Next.js', 'TypeScript', 'Postgres', 'PWA'],
     year: '2026',
     href: 'https://example.com',
-    repo: 'https://github.com/yourhandle/ledgerline',
+    repo: 'https://github.com/chvr4f/ledgerline',
     gradient: ['#5227ff', '#22d3ee'],
     featured: true,
   },
@@ -113,7 +116,7 @@ export const projects: Project[] = [
     tags: ['React', 'WebGL', 'GLSL', 'Sanity'],
     year: '2025',
     href: 'https://example.com',
-    repo: 'https://github.com/yourhandle/studio-kiln',
+    repo: 'https://github.com/chvr4f/studio-kiln',
     gradient: ['#f472b6', '#5227ff'],
     featured: true,
   },
@@ -122,7 +125,7 @@ export const projects: Project[] = [
     blurb: 'Live transit board for my campus, built from a scrappy GTFS parser and a 90-line service worker.',
     tags: ['React', 'GTFS', 'Service Worker'],
     year: '2025',
-    repo: 'https://github.com/yourhandle/commuter',
+    repo: 'https://github.com/chvr4f/commuter',
     gradient: ['#22d3ee', '#34d399'],
   },
   {
@@ -130,7 +133,7 @@ export const projects: Project[] = [
     blurb: 'Guitar-scale trainer that listens through the mic and scores you in real time using the Web Audio API.',
     tags: ['TypeScript', 'Web Audio', 'Canvas'],
     year: '2025',
-    repo: 'https://github.com/yourhandle/fret',
+    repo: 'https://github.com/chvr4f/fret',
     gradient: ['#fbbf24', '#f472b6'],
   },
   {
@@ -138,7 +141,7 @@ export const projects: Project[] = [
     blurb: 'A zero-config CLI that benchmarks any HTTP endpoint and prints a readable histogram in the terminal.',
     tags: ['Node.js', 'CLI', 'Go'],
     year: '2024',
-    repo: 'https://github.com/yourhandle/tinybench',
+    repo: 'https://github.com/chvr4f/tinybench',
     gradient: ['#a78bfa', '#22d3ee'],
   },
   {

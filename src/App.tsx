@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import ClickSpark from '@/components/ClickSpark';
 import SideNav from '@/components/layout/SideNav';
 import Hero from '@/sections/Hero';
@@ -6,7 +7,26 @@ import Work from '@/sections/Work';
 import Skills from '@/sections/Skills';
 import Contact from '@/sections/Contact';
 
+declare global {
+  interface Window {
+    /** Installed by the inline preloader script in index.html. */
+    __appReady?: () => void;
+  }
+}
+
 export default function App() {
+  // Dismiss the boot overlay once React has painted and the webfonts have
+  // settled — handing off earlier means the hero reflows in front of the user
+  // as Poppins swaps in.
+  useEffect(() => {
+    const release = () => window.__appReady?.();
+    if (document.fonts) {
+      document.fonts.ready.then(release, release);
+    } else {
+      release();
+    }
+  }, []);
+
   return (
     <ClickSpark sparkColor="#22d3ee" sparkSize={9} sparkRadius={18} sparkCount={8} duration={420}>
       <a

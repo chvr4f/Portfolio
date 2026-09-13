@@ -61,18 +61,52 @@ means no scroll position leaves the rail blank.
 [`components/layout/SideNav.tsx`](src/components/layout/SideNav.tsx) renders the
 same list two ways:
 
-- **lg and up** — [`DotRail`](src/components/layout/DotRail.tsx): a column of
-  dots with a scroll-progress track. At rest it is ~7px wide; the number and
-  label slide out only for the active section and for whichever dot is hovered
-  or keyboard-focused, so the page keeps nearly its full width. The active
-  section is whichever one owns the middle of the viewport.
+- **lg and up** — [`CameraNav`](src/components/layout/CameraNav.tsx): a camera
+  mode-wheel. Three labels are visible at a time, the active one centred in a
+  highlight band and its neighbours falling off in opacity. The lens-barrel
+  ticks beside it are warped with `tanh` and magnified by `1/cosh`, so they
+  bunch up toward the centre the way a real barrel does.
 - **below lg** — React Bits `StaggeredMenu` as a slide-in panel, because a fixed
   rail has nowhere to live on a phone.
 
+`SideNav` feeds the wheel a *fractional* position rather than an index, which is
+what lets it roll between entries. Note the `HOLD` constant in there: a straight
+interpolation between section tops reads as the next section while you are still
+at the top of the current one, because the viewport midpoint already sits well
+into it. The hold plus a smoothstep keeps each label parked until you have
+genuinely left its section.
+
 To add or reorder items, edit `navLinks` in `content.ts` **and** the matching
-`<section id="...">` — the rail resolves sections by that id. The `01`–`05`
-numbers on the rail are generated from list position; the numbers in the section
-headings are typed literals, so renumber those by hand if you reorder.
+`<section id="...">` — the rail resolves sections by that id. The rail itself
+carries no numbers, but the numbers in the section headings are typed literals,
+so renumber those by hand if you reorder.
+
+## Boot overlay
+
+The loading screen is plain markup and an inline `<style>`/`<script>` at the top
+of [`index.html`](index.html), deliberately *not* a React component — it has to
+paint on the first frame, and a component cannot, because it would be waiting on
+the very bundle it is meant to cover.
+
+The handshake:
+
+1. The overlay creeps its progress bar to 90% and parks there.
+2. `App.tsx` calls `window.__appReady()` once React has mounted and
+   `document.fonts.ready` has settled — earlier than that and Poppins swaps in
+   under the user's nose.
+3. The bar runs to 100%, holds for a beat, fades, and the node is removed from
+   the DOM entirely so it can never trap a click or a focus ring.
+
+Two rules worth keeping if you touch it. **Completion is driven by timers, not
+frames** — an early version finished inside the `requestAnimationFrame` loop and
+stranded the overlay for eight seconds on a machine where boot starved rAF down
+to 5fps. And there is a `MIN` floor of 1100ms, because on a warm cache the
+overlay would otherwise appear for a single frame, which reads as a glitch
+rather than an intro.
+
+On the way out it dispatches `app:loaded`. [`useAppLoaded`](src/hooks/useAppLoaded.ts)
+wraps that, and the hero's decrypt waits on it — without the gate the animation
+runs to completion behind the overlay and nobody sees it.
 
 Sections carry `lg:pl-44` to clear the fixed rail. If you lengthen the labels
 or bump their font size, re-check that gutter — the rail's widest point (with a
@@ -107,13 +141,25 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
   would otherwise unmount the entire page — leaving a blank screen. The boundary
   catches it and falls back to a CSS gradient. Wrap any future WebGL component the
   same way.
-- **Aurora is lazy-loaded** so the headline paints without waiting on `ogl`.
+- **`DarkVeil` is lazy-loaded** so the headline paints without waiting on `ogl`.
+- **`SpecularButton` degrades in place rather than via a boundary.** It is also
+  WebGL, but it is a primary call-to-action — a boundary would swap the whole
+  button out. Its GL setup is wrapped in a `try`/`catch` instead, so a missing
+  context costs only the shine and the link still works.
 - **Vendored components were modified.** Re-adding them from the registry will
   overwrite these:
   - `MagicBento.tsx` — added a `cards` prop (it hardcoded its own demo data) and
     removed the `max-w-[54rem]` / `width: 90%` constraints so the grid fills its container.
   - `TiltedCard.tsx` — overlay wrapper changed from `absolute top-0 left-0` to
     `absolute inset-0`, so `h-full` works for overlay content.
+  - `GlitchText.tsx` — `baseClasses` relaxed to `relative select-none` and the
+    opaque `bg-[#120F17]` changed to `bg-transparent`, which was showing as a
+    dark rectangle over the hero background.
+  - `SpecularButton.tsx` — added `href`/`target`/`rel`. Upstream renders a
+    hardcoded `<button>`; with an `href` it now renders an `<a>`, so the hero
+    CTAs keep link semantics (cmd/middle-click, "copy link address", and a
+    screen reader announcing "link"). Also wrapped the `ogl` setup in a
+    `try`/`catch` — see above.
 - **Vendored styling is overridden from `src/index.css` instead of being edited**,
   at the bottom of the file — the bento tile `aspect-[4/3]`, and the full dark
   theme for the `StaggeredMenu` panel (it ships white with 4rem type, which also
