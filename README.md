@@ -140,6 +140,8 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
   catches it and falls back to a CSS gradient. Wrap any future WebGL component the
   same way.
 - **`DarkVeil` is lazy-loaded** so the headline paints without waiting on `ogl`.
+- **`LightRays` (About background) is lazy-loaded and boundary-wrapped**, same
+  as DarkVeil — it is `ogl` too, and throws the same way without a GL context.
 - **`SpecularButton` degrades in place rather than via a boundary.** It is also
   WebGL, but it is a primary call-to-action — a boundary would swap the whole
   button out. Its GL setup is wrapped in a `try`/`catch` instead, so a missing
@@ -169,6 +171,42 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
     CTAs keep link semantics (cmd/middle-click, "copy link address", and a
     screen reader announcing "link"). Also wrapped the `ogl` setup in a
     `try`/`catch` — see above.
+- **GitHub numbers.** The About card fetches public stats live (cached 6h in
+  localStorage; the unauthenticated limit is 60 req/hour per IP). Two things it
+  deliberately does *not* do: there is no contribution count, because that lives
+  behind the GraphQL API and always needs a token; and private/collaborator
+  repos are not visible to it for the same reason. To count those, run
+  `GITHUB_TOKEN=... npm run sync:github`, which writes `src/data/github-stats.json`
+  at build time so only the numbers ship, never the token. Putting a token in
+  the bundle would give every visitor read access to the private repos it is
+  there to count.
+- **`projectsCount` and `topLanguages` in `content.ts` are hand-set**, because
+  the public API sees only 9 repos (5 owned + 4 shared) and ranks languages by
+  repo count, weighting every repo equally. The card takes `Math.max` of the
+  hand-set count, any token-verified sync, and the live public count — so the
+  number can be understated but never inflated.
+- **Counting shared repos needs `type=all`.** `/users/{u}/repos` defaults to
+  `type=owner`, which silently drops every repo you were added to as a
+  collaborator — 4 of 9 on this account.
+- **`yearsExperience` in `content.ts` is a hand-set placeholder.** Nothing on
+  GitHub can derive it — the account dates from 2025, which is when pushing
+  started, not when building did.
+- **`.sm-scope.fixed` gets `pointer-events: none`** (see `index.css`).
+  StaggeredMenu's outermost wrapper is fixed and full-viewport at z-40 but never
+  sets pointer-events, so below `lg` it covered the page and swallowed every
+  click — nothing on the site was tappable on a phone. Its toggle and panel
+  already declare `pointer-events-auto`, so only the wrapper needed opening up.
+- **`ProfileCard` needs the `pc-fit` class** (see `index.css`). It sizes itself
+  from its *height* — `80svh` capped at 540px — with a fixed aspect ratio, so
+  its width is derived and it cannot shrink below ~388px; on a phone it
+  overflowed its column and was clipped at the screen edge. The override drives
+  it from the container width instead. The same block scales the portrait to
+  82%: the component's demo uses a waist-up cutout, and a head-and-shoulders
+  crop at full width puts the face straight through the name and title.
+- **The portrait is `public/subject.png`**, downscaled to 610x900 (282KB) from a
+  2210x3258 4MB original. The original is kept locally but gitignored. If you
+  swap the photo, keep it a bottom-anchored cutout with a transparent
+  background — the card blends it with `mix-blend-mode: luminosity`.
 - **Vendored styling is overridden from `src/index.css` instead of being edited**,
   at the bottom of the file — the bento tile `aspect-[4/3]`, and the full dark
   theme for the `StaggeredMenu` panel (it ships white with 4rem type, which also

@@ -30,6 +30,47 @@ export const stats = [
   { label: 'Coffee per week', value: 21, suffix: '' },
 ];
 
+/** GitHub handle — the About card pulls its live stats from this account. */
+export const githubUser = 'chvr4f';
+
+/**
+ * Total projects, shown as "15+" on the About card.
+ *
+ * Set by hand because the live fetch cannot see private repos — it reads 9
+ * (5 owned + 4 shared). The card takes whichever is larger, so this is a floor:
+ * if the public count ever passes it, the real number wins automatically.
+ * `npm run sync:github` with a token replaces this with a verified figure.
+ */
+export const projectsCount = 15;
+
+/**
+ * Languages shown under the stats on the About card.
+ *
+ * Hand-set for the same reason as `projectsCount`: ranking by public repo count
+ * gives PHP, C#, TypeScript, which reflects only what is visible and weights
+ * every repo equally regardless of how much work is in it.
+ */
+export const topLanguages = ['C#', 'TypeScript', 'Shell'] as const;
+
+/**
+ * Years of professional experience.
+ *
+ * Set this by hand: nothing on GitHub can tell us. The account dates from 2025,
+ * which says when you started pushing there, not when you started building.
+ * THIS IS A PLACEHOLDER — change it to your real number.
+ */
+export const yearsExperience = 2;
+
+/** Chips under "What I Love" on the About card. */
+export const interests = [
+  'Clean Code',
+  'AI / ML',
+  'Problem Solving',
+  'Web Performance',
+  'Open Source',
+  'Design Systems',
+] as const;
+
 /** `icon` keys into the brand marks in components/layout/SocialIcon.tsx. */
 export const socials = [
   { label: 'GitHub', href: 'https://github.com/chvr4f', icon: 'github' },

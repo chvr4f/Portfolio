@@ -1,66 +1,87 @@
-import ScrollReveal from '@/components/ScrollReveal';
-import CountUp from '@/components/CountUp';
+import { lazy, Suspense } from 'react';
 import AnimatedContent from '@/components/AnimatedContent';
-import SectionHeading from '@/components/layout/SectionHeading';
+import ProfileCard from '@/components/ProfileCard';
+import CanvasBoundary from '@/components/layout/CanvasBoundary';
+import AboutCard from '@/components/layout/AboutCard';
 import Timeline from '@/components/layout/Timeline';
-import { profile, stats } from '@/data/content';
+import { profile } from '@/data/content';
+
+// WebGL, and purely decorative — same treatment as the hero's DarkVeil.
+const LightRays = lazy(() => import('@/components/LightRays'));
 
 export default function About() {
   return (
-    <section id="about" className="relative px-6 py-24 sm:py-32 lg:pl-52 xl:pl-72">
+    <section id="about" className="relative isolate overflow-hidden px-6 py-24 sm:py-32 lg:pl-52 xl:pl-72">
+      {/* Rays rake down across the section. Boundary-wrapped because ogl throws
+          outright when a GL context is unavailable, which would take the whole
+          page with it. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <CanvasBoundary fallback={null}>
+          <Suspense fallback={null}>
+            {/* Stock React Bits defaults — top-center origin, followMouse is
+                already on by default at mouseInfluence 0.1. */}
+            <LightRays />
+          </Suspense>
+        </CanvasBoundary>
+      </div>
+      {/* Keep the rays from colliding with the section seams above and below. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-40 bg-gradient-to-b from-ink-950 to-transparent"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-ink-950 to-transparent"
+      />
+
       <div className="mx-auto max-w-6xl">
-        <SectionHeading index="02 / About" title="Still a student. Already shipping." />
-
-        <div className="grid gap-16 lg:grid-cols-[1.55fr_1fr] lg:gap-20">
-          <ScrollReveal
-            baseOpacity={0.08}
-            baseRotation={2}
-            blurStrength={5}
-            enableBlur
-            containerClassName="!my-0"
-            textClassName="!text-[clamp(1.15rem,2.6vw,1.75rem)] !font-normal !leading-[1.5] !my-0 font-display tracking-tight"
-          >
-            {profile.bio}
-          </ScrollReveal>
-
-          <div className="space-y-8">
-            <AnimatedContent direction="horizontal" distance={60} duration={0.9} threshold={0.2}>
-              <dl className="grid grid-cols-2 gap-x-6 gap-y-8">
-                {stats.map(stat => (
-                  <div key={stat.label}>
-                    <dd className="font-display text-[clamp(2rem,6vw,3rem)] leading-none font-bold tracking-tight">
-                      <CountUp to={stat.value} duration={2} separator="," className="tabular-nums" />
-                      <span className="text-violet-glow">{stat.suffix}</span>
-                    </dd>
-                    <dt className="mt-2.5 font-mono text-[11px] leading-snug tracking-[0.12em] text-mist-500 uppercase">
-                      {stat.label}
-                    </dt>
-                  </div>
-                ))}
-              </dl>
-            </AnimatedContent>
-
-            <AnimatedContent direction="horizontal" distance={60} duration={0.9} delay={0.15} threshold={0.2}>
-              <div className="hairline space-y-3 rounded-2xl p-5">
-                <Row label="Based in" value={profile.location} />
-                <Row label="Status" value="Open to work" accent />
-                <Row label="Focus" value="Front-end / motion" />
-              </div>
-            </AnimatedContent>
+        {/* Centred heading — this section reads as its own title page, so it
+            drops the numbered index the other sections carry. */}
+        <AnimatedContent distance={40} duration={0.9} threshold={0.15}>
+          <div className="mb-14 text-center sm:mb-20">
+            <h2 className="font-display text-[clamp(2rem,5vw,3.25rem)] leading-[1.05] font-bold tracking-tight text-balance">
+              About Me
+            </h2>
+            <span
+              aria-hidden
+              className="mx-auto mt-5 block h-px w-20 bg-gradient-to-r from-transparent via-violet-glow to-transparent"
+            />
+            <p className="mt-5 text-[15px] leading-relaxed text-mist-500 sm:text-base">
+              Discover my journey and passion for technology
+            </p>
           </div>
+        </AnimatedContent>
+
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,24rem)_1fr] lg:gap-16">
+          {/* `pc-fit` (index.css) makes the card size from this column's width
+              rather than from its own height — see the note there. */}
+          <div className="mx-auto w-full max-w-[24rem] lg:mx-0 lg:sticky lg:top-24">
+            <ProfileCard
+              className="pc-fit"
+              // Luminance mask for the holographic shine — without it the sheen
+              // washes flat, because the component's default iconUrl is a
+              // placeholder string that resolves to `none`.
+              iconUrl="/card-icons.svg"
+              avatarUrl="/subject.png"
+              miniAvatarUrl="/subject.png"
+              name={profile.name}
+              title={profile.roles[0]}
+              handle="chvr4f"
+              status="Open to work"
+              contactText="Say hello"
+              onContactClick={() => {
+                window.location.href = `mailto:${profile.email}`;
+              }}
+            />
+          </div>
+
+          <AnimatedContent direction="horizontal" distance={60} duration={0.9} threshold={0.15}>
+            <AboutCard />
+          </AnimatedContent>
         </div>
 
         <Timeline />
       </div>
     </section>
-  );
-}
-
-function Row({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
-  return (
-    <div className="flex items-baseline justify-between gap-4">
-      <span className="font-mono text-[11px] tracking-[0.12em] text-mist-500 uppercase">{label}</span>
-      <span className={`text-sm ${accent ? 'text-emerald-400' : 'text-mist-100'}`}>{value}</span>
-    </div>
   );
 }

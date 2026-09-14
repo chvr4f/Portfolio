@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Full-resolution source images. The optimised copies that actually ship live
+# in public/ — Subject.png is 4MB against public/subject.png's 282KB.
+/Subject.png

@@ -53,6 +53,10 @@
       #preloader.pl-out {
         opacity: 0;
         visibility: hidden;
+        /* `visibility` only flips at the END of its transition, so for the whole
+           600ms fade the overlay was invisible but still hit-testable and ate
+           every click. Release the pointer the instant the fade starts. */
+        pointer-events: none;
       }
       /* Same palette as the hero backdrop, so the fade-out lands on a
          background that already looks like the page underneath it. */
