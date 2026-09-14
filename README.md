@@ -61,15 +61,13 @@ means no scroll position leaves the rail blank.
 [`components/layout/SideNav.tsx`](src/components/layout/SideNav.tsx) renders the
 same list two ways:
 
-- **lg and up** — [`CameraNav`](src/components/layout/CameraNav.tsx): a camera
-  mode-wheel. Three labels are visible at a time, the active one centred in a
-  highlight band and its neighbours falling off in opacity. The lens-barrel
-  ticks beside it are warped with `tanh` and magnified by `1/cosh`, so they
-  bunch up toward the centre the way a real barrel does.
+- **lg and up** — React Bits [`OptionWheel`](src/components/OptionWheel.tsx) as a
+  fixed rail. The active option sits at the vertical centre with the others
+  curving away above and below, behind a static highlight band.
 - **below lg** — React Bits `StaggeredMenu` as a slide-in panel, because a fixed
   rail has nowhere to live on a phone.
 
-`SideNav` feeds the wheel a *fractional* position rather than an index, which is
+`SideNav` feeds the wheel a *fractional* `position` rather than an index, which is
 what lets it roll between entries. Note the `HOLD` constant in there: a straight
 interpolation between section tops reads as the next section while you are still
 at the top of the current one, because the viewport midpoint already sits well
@@ -155,6 +153,17 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
   - `GlitchText.tsx` — `baseClasses` relaxed to `relative select-none` and the
     opaque `bg-[#120F17]` changed to `bg-transparent`, which was showing as a
     dark rectangle over the hero background.
+  - `OptionWheel.tsx` — upstream is a self-contained picker that owns its own
+    index (`defaultSelected` only seeds state; it is absent from the sync
+    effect's deps, so it does nothing after mount). Added a controlled
+    fractional `position` so page scroll can drive the wheel, an `onUserSelect`
+    that fires only for a click or an arrow key — `onChange` also fires when
+    `position` moves the wheel, so navigating from it would feed the scroll
+    back into itself — and a `captureScroll` flag. That last one matters:
+    upstream binds a non-passive `wheel` listener that calls `preventDefault`
+    and sets `touch-action: none`, which is right for a picker but in a fixed
+    rail stops the page scrolling whenever the cursor crosses the nav, and
+    blocks scrolling over it entirely on a touchscreen.
   - `SpecularButton.tsx` — added `href`/`target`/`rel`. Upstream renders a
     hardcoded `<button>`; with an `href` it now renders an `<a>`, so the hero
     CTAs keep link semantics (cmd/middle-click, "copy link address", and a
