@@ -9,7 +9,7 @@ export const profile = {
   name: 'Charaf',
   /** Cycled through the highlighted "I'm a ___" line in the hero. */
   roles: ['Full-Stack Developer', 'AI & ML Enthusiast', 'Front-End Specialist'],
-  location: 'Jakarta, Indonesia',
+  location: 'Oujda, Morocco',
   /** Short line directly under the name. */
   tagline:
     'Obsessed with building web experiences that feel fast, look sharp, and work for everyone. I turn rough ideas into polished products that leave a mark.',
@@ -199,44 +199,65 @@ export type TimelineEntry = {
   period: string;
   title: string;
   org: string;
-  description: string;
+  description?: string;
+  /** Bullet points, rendered under the description. */
+  highlights?: string[];
+  /** Stack for the role, rendered as chips. */
+  tech?: string[];
   kind: 'education' | 'experience';
 };
 
 export const timeline: TimelineEntry[] = [
   {
-    period: '2023 — 2027',
-    title: 'BSc Computer Science',
-    org: 'Your University',
+    period: '2022 — 2027',
+    title: 'Engineering Degree, Computer Engineering',
+    org: 'École des Hautes Études d’Ingénierie (EHEI) — Oujda, Morocco',
     description:
-      'Focus on systems and human–computer interaction. Teaching assistant for the first-year web development course.',
+      'Five-year programme: two preparatory years followed by three years of the engineering cycle.',
     kind: 'education',
   },
   {
-    period: 'Summer 2026',
-    title: 'Front-end Intern',
-    org: 'Some Studio',
+    period: 'Aug — Oct 2026',
+    title: 'Software Engineering Intern',
+    org: 'AET Aviation Training & Consulting GmbH — Germany',
     description:
-      'Rebuilt the marketing site component library, cut the largest bundle by 38%, and shipped a design-token pipeline.',
+      'Building a web-based Boeing 737 cockpit training application, extending an existing VR training solution to desktop and tablet.',
+    highlights: [
+      'Implemented training workflows: procedure selection, Captain / First Officer roles, cockpit navigation, zoom and interactive controls.',
+      'Worked with the AET team to translate existing VR functionality into a browser-based solution.',
+    ],
+    tech: ['Angular', 'TypeScript', 'Three.js'],
     kind: 'experience',
   },
   {
-    period: '2025 — present',
-    title: 'Freelance developer',
-    org: 'Self-employed',
+    period: 'Aug 2025',
+    title: 'AI / Machine Learning Engineering Intern',
+    org: 'SQLI — Oujda, Morocco',
     description:
-      'Built and maintained sites for four small businesses, handling design, build, and deployment end to end.',
+      'Fine-tuned a specialised NLP model for recruitment automation, extracting skills and requirements from technical job postings.',
+    highlights: [
+      'Deployed an AI tool that cut application processing time by a factor of three while improving screening consistency.',
+    ],
+    tech: ['Python', 'Transformers', 'NLP', 'Machine Learning'],
     kind: 'experience',
   },
   {
-    period: '2024',
-    title: 'Open-source contributor',
-    org: 'Various',
+    period: '2021 — 2022',
+    title: 'FFM & Internationale Förderklasse (IFK)',
+    org: 'Berufskolleg für Wirtschaft und Verwaltung — Aachen, Germany',
     description:
-      'Merged accessibility and documentation fixes into several React ecosystem libraries. First PRs, first reviews, steep learning curve.',
+      'Preparatory adaptation class plus the integration class for international students, with advanced German language training.',
+    kind: 'education',
+  },
+  {
+    period: '2020 — 2021',
+    title: 'Baccalaureate',
+    org: 'ENNAHDA High School — Ahfir, Morocco',
+    description: 'Physical Sciences stream.',
     kind: 'education',
   },
 ];
+
 
 /**
  * Side-rail navigation. Keep these in section order — the rail resolves each

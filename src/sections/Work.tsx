@@ -1,7 +1,7 @@
 import TiltedCard from '@/components/TiltedCard';
 import SpotlightCard from '@/components/SpotlightCard';
 import AnimatedContent from '@/components/AnimatedContent';
-import SectionHeading from '@/components/layout/SectionHeading';
+import GradientHeading from '@/components/layout/GradientHeading';
 import { projects, type Project } from '@/data/content';
 import { projectCover } from '@/lib/cover';
 
@@ -12,11 +12,9 @@ export default function Work() {
   return (
     <section id="projects" className="relative px-6 py-24 sm:py-32 lg:pl-52 xl:pl-72">
       <div className="mx-auto max-w-6xl">
-        <SectionHeading
-          index="03 / Projects"
-          title="Selected projects"
-          lede="A mix of coursework that outgrew the brief, freelance builds, and things I made because I wanted them to exist."
-        />
+        <GradientHeading lede="A mix of coursework that outgrew the brief, freelance builds, and things I made because I wanted them to exist.">
+          Featured Projects
+        </GradientHeading>
 
         {/* Featured — 3D tilt cards */}
         <div className="grid gap-8 sm:gap-10 lg:grid-cols-2">

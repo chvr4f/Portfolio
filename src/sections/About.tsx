@@ -3,6 +3,7 @@ import AnimatedContent from '@/components/AnimatedContent';
 import ProfileCard from '@/components/ProfileCard';
 import CanvasBoundary from '@/components/layout/CanvasBoundary';
 import AboutCard from '@/components/layout/AboutCard';
+import GradientHeading from '@/components/layout/GradientHeading';
 import Timeline from '@/components/layout/Timeline';
 import { profile } from '@/data/content';
 
@@ -37,20 +38,9 @@ export default function About() {
       <div className="mx-auto max-w-6xl">
         {/* Centred heading — this section reads as its own title page, so it
             drops the numbered index the other sections carry. */}
-        <AnimatedContent distance={40} duration={0.9} threshold={0.15}>
-          <div className="mb-14 text-center sm:mb-20">
-            <h2 className="font-display text-[clamp(2rem,5vw,3.25rem)] leading-[1.05] font-bold tracking-tight text-balance">
-              About Me
-            </h2>
-            <span
-              aria-hidden
-              className="mx-auto mt-5 block h-px w-20 bg-gradient-to-r from-transparent via-violet-glow to-transparent"
-            />
-            <p className="mt-5 text-[15px] leading-relaxed text-mist-500 sm:text-base">
-              Discover my journey and passion for technology
-            </p>
-          </div>
-        </AnimatedContent>
+        <GradientHeading lede="Discover my journey and passion for technology">
+          About Me
+        </GradientHeading>
 
         <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,24rem)_1fr] lg:gap-16">
           {/* `pc-fit` (index.css) makes the card size from this column's width
