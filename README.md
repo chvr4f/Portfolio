@@ -155,6 +155,22 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
   - `GlitchText.tsx` — `baseClasses` relaxed to `relative select-none` and the
     opaque `bg-[#120F17]` changed to `bg-transparent`, which was showing as a
     dark rectangle over the hero background.
+  - `ChromaGrid.tsx` — reshaped into a project grid. Flex-wrap of fixed 300px
+    cards became a 1/2/3-column grid (equal widths, and equal heights per row
+    because grid items stretch); text is pinned to the card bottom so titles
+    align; descriptions clamp at 3 lines; added `tech` (dot-separated line) and
+    `desaturate` (off here — upstream greys out everything away from the
+    pointer, and everything before the pointer arrives). The per-card gradient
+    is a faint hover tint rather than the whole card background, and
+    `cursor-pointer`/click only apply when a card has a `url`. The footer grid
+    upstream assumed `handle` and `location` exist; without them the
+    description fell into the side column next to the title. Added
+    `onCardSelect`, which makes a card open the write-up dialog instead of the
+    link, and with it the keyboard and ARIA affordances upstream's plain
+    `onClick` div lacks. The description and stack lines carry a height floor
+    as well as a clamp, so those rows start on the same line in every card;
+    the title deliberately has none, because the footer is bottom-pinned and a
+    floor there would only open a gap under every single-line title.
   - `OptionWheel.tsx` — upstream is a self-contained picker that owns its own
     index (`defaultSelected` only seeds state; it is absent from the sync
     effect's deps, so it does nothing after mount). Added a controlled

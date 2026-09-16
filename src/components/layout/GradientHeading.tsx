@@ -36,7 +36,7 @@ export default function GradientHeading({
           className="mx-auto mt-1 block h-px w-20 bg-gradient-to-r from-transparent via-violet-glow to-transparent"
         />
         {lede && (
-          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-mist-500 sm:text-base">
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-gray-400">
             {lede}
           </p>
         )}
