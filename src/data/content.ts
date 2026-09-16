@@ -120,11 +120,23 @@ export const skills = [
   },
 ];
 
-/** Tech names for the scrolling marquee. */
+/**
+ * The logo marquee in Skills, in scroll order. Each name must have an icon in
+ * components/layout/TechIcon.tsx — `as const` makes a missing one a type error.
+ */
 export const techStack = [
-  'TypeScript', 'React', 'Next.js', 'Tailwind CSS', 'Node.js',
-  'GSAP', 'WebGL', 'Postgres', 'Prisma', 'Vitest', 'Figma', 'Git',
-];
+  'Angular', 'TypeScript', 'React', 'C#', '.NET', 'Go', 'Python',
+  'Spring Boot', 'Symfony', 'Node.js', 'Three.js', 'Supabase', 'PostgreSQL',
+  'MySQL', 'Redis', 'Elasticsearch', 'Docker', 'Ollama', 'Tailwind CSS',
+  'Git', 'Shell',
+] as const;
+
+/** The card under the marquee. Topics render as chips. */
+export const learning = {
+  title: 'Always Learning',
+  text: "Technology moves fast, and so do I. I'm always exploring new frameworks, patterns and tools — right now that means fine-tuning and running language models locally, distributed systems, and real-time 3D on the web.",
+  topics: ['AI / ML', 'LLM Fine-tuning', 'Microservices', 'Distributed Systems', '3D & WebGL', 'DevOps'],
+} as const;
 
 export type Project = {
   title: string;

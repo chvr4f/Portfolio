@@ -408,6 +408,10 @@ export const LogoLoop = React.memo<LogoLoopProps>(
             key={`copy-${copyIndex}`}
             role="list"
             aria-hidden={copyIndex > 0}
+            // LOCAL ADDITION: the copies exist only to fill the loop. aria-hidden
+            // hides them from screen readers but leaves any links inside them
+            // in the tab order — three stops per logo. inert removes both.
+            inert={copyIndex > 0 ? true : undefined}
             ref={copyIndex === 0 ? seqRef : undefined}
           >
             {logos.map((item, itemIndex) => renderLogoItem(item, `${copyIndex}-${itemIndex}`))}

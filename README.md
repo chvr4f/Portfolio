@@ -171,6 +171,13 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
     as well as a clamp, so those rows start on the same line in every card;
     the title deliberately has none, because the footer is bottom-pinned and a
     floor there would only open a gap under every single-line title.
+  - `TargetCursor.tsx` — re-measures the target on every tick. Upstream
+    measures it once, on enter, which assumes targets stand still; inside the
+    Skills marquee the logo is still gliding to a halt, so the frame was left
+    around empty space.
+  - `LogoLoop.tsx` — the duplicate copies that fill the loop are `inert` as
+    well as `aria-hidden`. With links in the logos, aria-hidden alone left every
+    duplicate in the tab order (three stops per logo).
   - `OptionWheel.tsx` — upstream is a self-contained picker that owns its own
     index (`defaultSelected` only seeds state; it is absent from the sync
     effect's deps, so it does nothing after mount). Added a controlled
