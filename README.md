@@ -22,7 +22,7 @@ Outside that file:
 | What | Where |
 | --- | --- |
 | Page title, meta description, social preview tags | [`index.html`](index.html) |
-| Social preview image (1200×630) | [`public/og.png`](public/og.png) |
+| Social preview image (1200×630) | [`public/og-hero.png`](public/og-hero.png) |
 | Favicon / home-screen icon | [`public/favicon.svg`](public/favicon.svg), [`public/apple-touch-icon.png`](public/apple-touch-icon.png) |
 | Project screenshots | [`public/images/projects/`](public/images/projects/) |
 
@@ -283,6 +283,10 @@ pointed at Cloudflare; it renews in September 2027.
 [`index.html`](index.html) hard-codes that domain in `canonical`, `og:url`,
 `og:image` and `twitter:image` — they have to be absolute for LinkedIn and
 Facebook previews. Change all four if the domain ever changes.
+
+LinkedIn caches preview images by URL, so re-running its Post Inspector does
+not pick up a replaced image at the same path. When changing the preview image,
+give the file a new name (and update `og:image`/`twitter:image`).
 
 Optionally, refresh the GitHub numbers on the About card first with
 `GITHUB_TOKEN=… npm run sync:github` — the token stays on your machine; only
