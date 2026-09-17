@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import OptionWheel from '@/components/OptionWheel';
 import { StaggeredMenu } from '@/components/StaggeredMenu';
 import { navLinks, socials } from '@/data/content';
+import { asset } from '@/lib/asset';
 
 /**
  * Navigation is two presentations of the same list:
@@ -138,7 +139,7 @@ export default function SideNav() {
           }))}
           socialItems={socials.map(s => ({ label: s.label, link: s.href }))}
           displaySocials
-          logoUrl="/mark.svg"
+          logoUrl={asset('/mark.svg')}
           accentColor="#22d3ee"
           colors={['#1b1436', '#0e1018']}
           menuButtonColor="#eceef5"

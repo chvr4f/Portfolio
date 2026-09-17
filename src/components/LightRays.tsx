@@ -146,10 +146,19 @@ const LightRays: React.FC<LightRaysProps> = ({
 
       if (!containerRef.current) return;
 
-      const renderer = new Renderer({
-        dpr: Math.min(window.devicePixelRatio, 2),
-        alpha: true
-      });
+      // LOCAL ADDITION: this runs inside an async function, so a throw here is
+      // a rejected promise that CanvasBoundary never sees — without WebGL, ogl
+      // throws and it surfaced as an uncaught page error. Bail out instead;
+      // the section simply has no rays.
+      let renderer: Renderer;
+      try {
+        renderer = new Renderer({
+          dpr: Math.min(window.devicePixelRatio, 2),
+          alpha: true
+        });
+      } catch {
+        return;
+      }
       rendererRef.current = renderer;
 
       const gl = renderer.gl;

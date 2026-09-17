@@ -5,6 +5,7 @@ import GradientHeading from '@/components/layout/GradientHeading';
 import ProjectDialog from '@/components/layout/ProjectDialog';
 import { projects } from '@/data/content';
 import { projectCover } from '@/lib/cover';
+import { asset } from '@/lib/asset';
 
 export default function Work() {
   // Index rather than the project itself: the grid reports the card position,
@@ -12,7 +13,7 @@ export default function Work() {
   const [selected, setSelected] = useState<number | null>(null);
 
   const items: ChromaItem[] = projects.map(p => ({
-    image: p.image ?? projectCover([p.accent, '#0a0b12'], p.title),
+    image: p.image ? asset(p.image) : projectCover([p.accent, '#0a0b12'], p.title),
     title: p.title,
     subtitle: p.blurb,
     tech: p.tech,

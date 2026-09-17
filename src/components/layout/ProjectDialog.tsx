@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { Project } from '@/data/content';
+import { asset } from '@/lib/asset';
 
 type Props = {
   project: Project;
@@ -48,7 +49,7 @@ export default function ProjectDialog({ project, onClose }: Props) {
         <div className="relative">
           {project.image && (
             <img
-              src={project.image}
+              src={asset(project.image)}
               alt=""
               className="aspect-[19/10] w-full object-cover"
             />

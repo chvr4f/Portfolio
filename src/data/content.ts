@@ -20,15 +20,7 @@ export const profile = {
   next person can actually read. Right now I'm looking for an internship or junior
   role where I can keep learning in public.`,
   email: 'charaf2322004@gmail.com',
-  resumeUrl: '/resume.pdf',
 } as const;
-
-export const stats = [
-  { label: 'Projects shipped', value: 12, suffix: '' },
-  { label: 'GitHub contributions', value: 840, suffix: '+' },
-  { label: 'Hackathons', value: 4, suffix: '' },
-  { label: 'Coffee per week', value: 21, suffix: '' },
-];
 
 /** GitHub handle — the About card pulls its live stats from this account. */
 export const githubUser = 'chvr4f';
@@ -79,46 +71,6 @@ export const socials = [
   // `as const` keeps `icon` as its literal type so it still satisfies
   // SocialIcon's union instead of widening to plain string.
 ] as const;
-
-/** Skill tiles for the MagicBento grid. Exactly 6 reads best. */
-export const skills = [
-  {
-    color: '#0e1018',
-    label: 'Core',
-    title: 'Languages',
-    description: 'TypeScript, JavaScript, Python, and enough Go to be dangerous.',
-  },
-  {
-    color: '#0e1018',
-    label: 'Front-end',
-    title: 'React & friends',
-    description: 'React 19, Next.js, Vite, Tailwind, and component-driven architecture.',
-  },
-  {
-    color: '#0e1018',
-    label: 'Motion',
-    title: 'Animation',
-    description: 'GSAP, Motion, and WebGL via OGL — used sparingly and on purpose.',
-  },
-  {
-    color: '#0e1018',
-    label: 'Back-end',
-    title: 'APIs & data',
-    description: 'Node, REST and tRPC, Postgres with Prisma, a little Redis.',
-  },
-  {
-    color: '#0e1018',
-    label: 'Craft',
-    title: 'Testing & CI',
-    description: 'Vitest, Playwright, GitHub Actions, and reviewable pull requests.',
-  },
-  {
-    color: '#0e1018',
-    label: 'Design',
-    title: 'Interface design',
-    description: 'Figma, type systems, and accessibility that is not bolted on later.',
-  },
-];
 
 /**
  * The logo marquee in Skills, in scroll order. Each name must have an icon in

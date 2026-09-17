@@ -13,16 +13,18 @@ npm run lint     # oxlint
 ## Make it yours
 
 **Almost everything lives in one file: [`src/data/content.ts`](src/data/content.ts).**
-Edit that and the whole site updates — name, roles, bio, stats, socials, skills,
-tech marquee, projects, and timeline. No component edits needed.
+Edit that and the whole site updates — name, roles, bio, GitHub numbers, socials,
+the tech marquee, the "Always Learning" card, projects, and the timeline. No
+component edits needed.
 
-Then update these three things outside that file:
+Outside that file:
 
 | What | Where |
 | --- | --- |
-| Page title, meta description, OG tags | [`index.html`](index.html) |
-| Résumé PDF | drop `resume.pdf` into [`public/`](public/) |
-| Favicon | [`public/favicon.svg`](public/favicon.svg) |
+| Page title, meta description, social preview tags | [`index.html`](index.html) |
+| Social preview image (1200×630) | [`public/og.png`](public/og.png) |
+| Favicon / home-screen icon | [`public/favicon.svg`](public/favicon.svg), [`public/apple-touch-icon.png`](public/apple-touch-icon.png) |
+| Project screenshots | [`public/images/projects/`](public/images/projects/) |
 
 Colors and fonts are design tokens at the top of [`src/index.css`](src/index.css)
 (`--color-ink-*`, `--color-mist-*`, `--color-violet-glow`, `--color-cyan-glow`).
@@ -37,8 +39,11 @@ src/
 ├── App.tsx               ← section order
 ├── sections/             ← Hero, About, Work, Skills, Contact
 ├── components/           ← React Bits components (vendored)
-│   └── layout/           ← SideNav, SectionHeading, Timeline, CanvasBoundary
-└── lib/cover.ts          ← generates project card artwork as inline SVG
+│   └── layout/           ← SideNav, GradientHeading, Timeline, AboutCard,
+│                            ProjectDialog, TechIcon, CanvasBoundary, NearViewport
+└── lib/
+    ├── asset.ts          ← resolves public/ paths against the deploy base
+    └── cover.ts          ← fallback project artwork as inline SVG
 ```
 
 The five sections map 1:1 onto the five side-rail items, so every scroll
@@ -106,19 +111,25 @@ On the way out it dispatches `app:loaded`. [`useAppLoaded`](src/hooks/useAppLoad
 wraps that, and the hero's decrypt waits on it — without the gate the animation
 runs to completion behind the overlay and nobody sees it.
 
-Sections carry `lg:pl-44` to clear the fixed rail. If you lengthen the labels
+Sections carry `lg:pl-52 xl:pl-72` to clear the fixed rail. If you lengthen the labels
 or bump their font size, re-check that gutter — the rail's widest point (with a
 label expanded) must stay left of where the content starts.
 
 ## Project images
 
-Project cards use generated SVG gradients from `src/lib/cover.ts`, so there are no
-binary assets to manage. To use a real screenshot instead, drop it in `public/` and
-swap the `imageSrc` in [`src/sections/Work.tsx`](src/sections/Work.tsx):
+Each project in `content.ts` takes an optional `image`. Put the file in
+`public/images/projects/` and reference it root-relative:
 
-```tsx
-imageSrc="/shots/ledgerline.png"   // instead of projectCover(...)
+```ts
+image: '/images/projects/whispiy.jpg',
 ```
+
+The card crops to 19:10, so export at that ratio (around 1000×526 is plenty —
+the card shows it at ~350px wide). Without an `image`, the card falls back to
+artwork generated from the project's `accent` by `src/lib/cover.ts`.
+
+Paths from `public/` are passed through `asset()` (`src/lib/asset.ts`) at the
+point of use, so they keep working if the site is served from a sub-path.
 
 ## Adding more React Bits components
 
@@ -134,24 +145,27 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
 
 ## Notes for future you
 
-- **`CanvasBoundary`** wraps the WebGL hero background. `ogl` throws when a GL context
+- **`CanvasBoundary`** wraps every WebGL background. `ogl` throws when a GL context
   isn't available (GPU blocklists, WebGL disabled, headless browsers) and that error
   would otherwise unmount the entire page — leaving a blank screen. The boundary
   catches it and falls back to a CSS gradient. Wrap any future WebGL component the
   same way.
-- **`DarkVeil` is lazy-loaded** so the headline paints without waiting on `ogl`.
-- **`LightRays` (About background) is lazy-loaded and boundary-wrapped**, same
-  as DarkVeil — it is `ogl` too, and throws the same way without a GL context.
+- **The four shader backgrounds are lazy-loaded** — DarkVeil (hero), LightRays
+  (About), SoftAurora (Skills) and Plasma (Contact) — so the headline paints
+  without waiting on `ogl`.
+- **DarkVeil and SoftAurora are wrapped in `NearViewport`**, which mounts them
+  only while their section is on or near the screen. They draw every frame
+  wherever they are, and browsers only pause that for a hidden tab, not for a
+  canvas scrolled out of sight. LightRays and Plasma pause themselves already.
 - **`SpecularButton` degrades in place rather than via a boundary.** It is also
   WebGL, but it is a primary call-to-action — a boundary would swap the whole
   button out. Its GL setup is wrapped in a `try`/`catch` instead, so a missing
   context costs only the shine and the link still works.
 - **Vendored components were modified.** Re-adding them from the registry will
   overwrite these:
-  - `MagicBento.tsx` — added a `cards` prop (it hardcoded its own demo data) and
-    removed the `max-w-[54rem]` / `width: 90%` constraints so the grid fills its container.
-  - `TiltedCard.tsx` — overlay wrapper changed from `absolute top-0 left-0` to
-    `absolute inset-0`, so `h-full` works for overlay content.
+  - `LightRays.tsx` — renderer creation is wrapped in `try`/`catch`. It runs
+    inside an async function, so without WebGL the throw became an uncaught
+    page error that `CanvasBoundary` could not see.
   - `GlitchText.tsx` — `baseClasses` relaxed to `relative select-none` and the
     opaque `bg-[#120F17]` changed to `bg-transparent`, which was showing as a
     dark rectangle over the hero background.
@@ -241,17 +255,35 @@ full catalogue of 165+ components at [reactbits.dev](https://www.reactbits.dev/)
   vendored component sources don't satisfy them.
 - **`npm run lint` reports warnings from `src/components/*`** — those are upstream
   React Bits sources, left unmodified on purpose. Authored code is clean.
-- `html`/`body` use `overflow-x: clip` (not `hidden`) to contain bleed from
-  ScrollReveal's rotation without creating a scroll container that would break
-  GSAP ScrollTrigger.
+- `html` uses `overflow-x: clip` (not `hidden`) to contain decorative bleed
+  without creating a scroll container, which would break the sticky profile
+  card in About.
 
 ## Deploying
 
-Static output — any host works.
+Static output with no client-side routing, so any static host works and no
+rewrite rules are needed.
 
 ```bash
-npm run build   # → dist/
+npm run build     # typecheck + build → dist/
+npm run preview   # check the production build locally
 ```
 
-Vercel / Netlify / Cloudflare Pages: build `npm run build`, publish `dist`.
-For GitHub Pages, set `base: '/<repo-name>/'` in [`vite.config.ts`](vite.config.ts) first.
+- **Vercel / Netlify / Cloudflare Pages:** build command `npm run build`,
+  output directory `dist`. Node 20+.
+- **GitHub Pages** (served from `/<repo>/`): build with the sub-path as base,
+  e.g. `npx vite build --base /Portfolio/`, and publish `dist`. Image paths
+  follow the base via `asset()`.
+
+The live site is **https://charaf.me** — Cloudflare Pages, building from this
+repo on every push to `main` (build `npm run build`, output `dist`,
+`NODE_VERSION=22`). The domain is registered at Namecheap with its nameservers
+pointed at Cloudflare; it renews in September 2027.
+
+[`index.html`](index.html) hard-codes that domain in `canonical`, `og:url`,
+`og:image` and `twitter:image` — they have to be absolute for LinkedIn and
+Facebook previews. Change all four if the domain ever changes.
+
+Optionally, refresh the GitHub numbers on the About card first with
+`GITHUB_TOKEN=… npm run sync:github` — the token stays on your machine; only
+the resulting `src/data/github-stats.json` is committed.

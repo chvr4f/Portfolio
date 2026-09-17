@@ -21,10 +21,6 @@
 
   --color-violet-glow: #5227ff;
   --color-cyan-glow: #22d3ee;
-
-  /* StarBorder keyframes */
-  --animate-star-movement-top: star-movement-top linear infinite alternate;
-  --animate-star-movement-bottom: star-movement-bottom linear infinite alternate;
 }
 
 @keyframes glitch {
@@ -51,38 +47,6 @@
   100% { clip-path: inset(30% 0 40% 0); }
 }
 
-@keyframes star-movement-top {
-  0% {
-    transform: translate(0%, 0%);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(100%, 0%);
-    opacity: 0;
-  }
-}
-
-@keyframes star-movement-bottom {
-  0% {
-    transform: translate(0%, 0%);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-100%, 0%);
-    opacity: 0;
-  }
-}
-
-/* ---------------------------------------------------------------
-   Variables consumed by the vendored MagicBento component
-   --------------------------------------------------------------- */
-:root {
-  --white: #ffffff;
-  --background-dark: #0e1018;
-  --border-color: #23263a;
-  --glow-color: 82, 39, 255;
-}
-
 /* ---------------------------------------------------------------
    Base
    --------------------------------------------------------------- */
@@ -90,9 +54,9 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    /* `clip` rather than `hidden`: it contains the bleed from ScrollReveal's
-       rotation and the contact glow without creating a scroll container,
-       which would break GSAP ScrollTrigger and sticky positioning. */
+    /* `clip` rather than `hidden`: it contains decorative bleed without
+       creating a scroll container, which would break sticky positioning
+       (the About profile card is sticky). */
     overflow-x: clip;
   }
 
@@ -151,25 +115,6 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-/* ---------------------------------------------------------------
-   MagicBento overrides
-   The vendored component hardcodes `aspect-[4/3]` on each tile, which was
-   tuned for its own 54rem max-width. Now that the grid spans the full
-   container the tiles grow very tall and leave large empty voids, so let
-   content drive the height and keep the bento spans intact.
-   --------------------------------------------------------------- */
-.card-responsive .card {
-  aspect-ratio: auto;
-  min-height: 168px;
-  gap: 1.25rem;
-}
-
-@media (min-width: 1024px) {
-  .card-responsive .card {
-    min-height: 190px;
   }
 }
 

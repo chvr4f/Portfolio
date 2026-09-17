@@ -6,6 +6,7 @@ import AboutCard from '@/components/layout/AboutCard';
 import GradientHeading from '@/components/layout/GradientHeading';
 import Timeline from '@/components/layout/Timeline';
 import { profile } from '@/data/content';
+import { asset } from '@/lib/asset';
 
 // WebGL, and purely decorative — same treatment as the hero's DarkVeil.
 const LightRays = lazy(() => import('@/components/LightRays'));
@@ -51,9 +52,9 @@ export default function About() {
               // Luminance mask for the holographic shine — without it the sheen
               // washes flat, because the component's default iconUrl is a
               // placeholder string that resolves to `none`.
-              iconUrl="/card-icons.svg"
-              avatarUrl="/subject.png"
-              miniAvatarUrl="/subject.png"
+              iconUrl={asset('/card-icons.svg')}
+              avatarUrl={asset('/subject.png')}
+              miniAvatarUrl={asset('/subject.png')}
               name={profile.name}
               title={profile.roles[0]}
               handle="chvr4f"

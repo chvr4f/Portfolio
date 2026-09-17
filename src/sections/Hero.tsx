@@ -5,6 +5,7 @@ import AnimatedContent from '@/components/AnimatedContent';
 import DecryptedText from '@/components/DecryptedText';
 import SpecularButton from '@/components/SpecularButton';
 import CanvasBoundary from '@/components/layout/CanvasBoundary';
+import NearViewport from '@/components/layout/NearViewport';
 import useAppLoaded from '@/hooks/useAppLoaded';
 import SocialIcon from '@/components/layout/SocialIcon';
 import { profile, socials } from '@/data/content';
@@ -26,11 +27,13 @@ export default function Hero() {
       {/* DarkVeil (WebGL). Wrapped in a boundary because a failed GL context
           throws during init and would otherwise blank the entire page. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <CanvasBoundary fallback={<Backdrop />}>
-          <Suspense fallback={<Backdrop />}>
-            <DarkVeil speed={0.4} hueShift={12} warpAmount={0.6} noiseIntensity={0.02} resolutionScale={1} />
-          </Suspense>
-        </CanvasBoundary>
+        <NearViewport className="absolute inset-0" fallback={<Backdrop />}>
+          <CanvasBoundary fallback={<Backdrop />}>
+            <Suspense fallback={<Backdrop />}>
+              <DarkVeil speed={0.4} hueShift={12} warpAmount={0.6} noiseIntensity={0.02} resolutionScale={1} />
+            </Suspense>
+          </CanvasBoundary>
+        </NearViewport>
       </div>
 
       {/* Fade the aurora into the page so the section seam disappears */}
@@ -42,7 +45,9 @@ export default function Hero() {
       <div className="mx-auto w-full max-w-6xl pt-24 pb-20">
         {/* GlitchText renders a <div>, which cannot live inside an <h1>, so the
             heading is carried by a visually-hidden one for semantics and SEO. */}
-        <h1 className="sr-only">{profile.name} — front-end developer</h1>
+        <h1 className="sr-only">
+          {profile.name} — {profile.roles[0]}
+        </h1>
 
         <AnimatedContent distance={30} duration={0.8}>
           <p className="mb-2 font-display text-[clamp(1.35rem,3vw,1.9rem)] font-medium text-mist-300">

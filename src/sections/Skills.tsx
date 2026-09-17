@@ -3,6 +3,7 @@ import LogoLoop from '@/components/LogoLoop';
 import AnimatedContent from '@/components/AnimatedContent';
 import GradientHeading from '@/components/layout/GradientHeading';
 import CanvasBoundary from '@/components/layout/CanvasBoundary';
+import NearViewport from '@/components/layout/NearViewport';
 import TechTile from '@/components/layout/TechIcon';
 import { learning, techStack } from '@/data/content';
 
@@ -48,30 +49,32 @@ export default function Skills() {
           aria-hidden
           className="absolute top-[-13rem] left-1/2 -z-10 h-[44rem] w-[160vw] -translate-x-1/2 [mask-image:linear-gradient(to_bottom,transparent,black_30%,black_70%,transparent)]"
         >
-          <CanvasBoundary fallback={null}>
-            <Suspense fallback={null}>
-              {/* Stock React Bits settings, except the band: bandSpread is
-                  the rate the glow falls off either side of the ribbon, so
-                  halving it roughly doubles how wide the shading spreads.
-                  That also halves the peak, which brightness buys back. */}
-              <SoftAurora
-                speed={0.6}
-                scale={1.5}
-                brightness={1.5}
-                color1="#f7f7f7"
-                color2="#e100ff"
-                noiseFrequency={2.5}
-                noiseAmplitude={1}
-                bandHeight={0.5}
-                bandSpread={0.5}
-                octaveDecay={0.1}
-                layerOffset={0}
-                colorSpeed={1}
-                enableMouseInteraction
-                mouseInfluence={0.25}
-              />
-            </Suspense>
-          </CanvasBoundary>
+          <NearViewport className="h-full w-full">
+            <CanvasBoundary fallback={null}>
+              <Suspense fallback={null}>
+                {/* Stock React Bits settings, except the band: bandSpread is
+                    the rate the glow falls off either side of the ribbon, so
+                    halving it roughly doubles how wide the shading spreads.
+                    That also halves the peak, which brightness buys back. */}
+                <SoftAurora
+                  speed={0.6}
+                  scale={1.5}
+                  brightness={1.5}
+                  color1="#f7f7f7"
+                  color2="#e100ff"
+                  noiseFrequency={2.5}
+                  noiseAmplitude={1}
+                  bandHeight={0.5}
+                  bandSpread={0.5}
+                  octaveDecay={0.1}
+                  layerOffset={0}
+                  colorSpeed={1}
+                  enableMouseInteraction
+                  mouseInfluence={0.25}
+                />
+              </Suspense>
+            </CanvasBoundary>
+          </NearViewport>
         </div>
 
         {/* TargetCursor hides the window's cursor for as long as it is
