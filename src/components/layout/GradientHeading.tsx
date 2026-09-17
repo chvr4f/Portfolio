@@ -6,6 +6,8 @@ type Props = {
   /** `section` is a top-level section title; `sub` is a heading within one. */
   size?: 'section' | 'sub';
   as?: 'h2' | 'h3';
+  /** Extra classes for the heading element alone, not the divider or lede. */
+  titleClassName?: string;
 };
 
 /**
@@ -20,6 +22,7 @@ export default function GradientHeading({
   lede,
   size = 'section',
   as: Tag = 'h2',
+  titleClassName = '',
 }: Props) {
   return (
     <AnimatedContent distance={40} duration={0.9} threshold={0.15}>
@@ -27,7 +30,7 @@ export default function GradientHeading({
         <Tag
           className={`mb-4 inline-block bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text font-display font-bold text-transparent ${
             size === 'section' ? 'text-4xl md:text-5xl' : 'text-2xl md:text-3xl'
-          }`}
+          } ${titleClassName}`}
         >
           {children}
         </Tag>
